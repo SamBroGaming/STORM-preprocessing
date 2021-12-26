@@ -76,7 +76,7 @@ def check_season(idx,month):
     
     Parameters
     ----------
-    idx : Basin index (EP=0,NA=1,NI=2,SI=3,SP=4,WP=5)
+    idx : Basin index (NP=0,NA=1,NI=2,SI=3,SP=4)
     month : month in which TC occurred
 
     Returns
@@ -84,7 +84,7 @@ def check_season(idx,month):
     check : 0 if TC did not occur in TC season, 1 if TC did occur in TC season. 
     """
     check=0
-    if idx==0 or idx==1:
+    if idx==1:
         if month>5 and month<12:
             check=1
     elif idx==2:
@@ -95,7 +95,7 @@ def check_season(idx,month):
     elif idx==3 or idx==4:
         if month<5 or month>10:
             check=1
-    elif idx==5:
+    elif idx==0:
         if month>4 and month<12:
             check=1
     return check
@@ -135,9 +135,9 @@ def wind_pressure_relationship():
     lat=data.latitude.values
     data.close()
 
-    pres_basin={i:[] for i in range(0,6)}
-    wind_basin={i:[] for i in range(0,6)}
-    month_basin={i:[] for i in range(0,6)}
+    pres_basin={i:[] for i in range(0,5)}
+    wind_basin={i:[] for i in range(0,5)}
+    month_basin={i:[] for i in range(0,5)}
     
     for i in range(len(latlist)):
         if len(latlist[i])>0:            
@@ -156,10 +156,10 @@ def wind_pressure_relationship():
                             wind_basin[idx].append(windlist[i][j])
                             month_basin[idx].append(month)
       
-    coeff_list={i:[] for i in range(0,6)}    
+    coeff_list={i:[] for i in range(0,5)}    
     months=[[6,7,8,9,10,11],[6,7,8,9,10,11],[4,5,6,9,10,11],[1,2,3,4,11,12],[1,2,3,4,11,12],[5,6,7,8,9,10,11]]
     
-    for idx in range(0,6):        
+    for idx in range(0,5):        
         coeff_list[idx]={i:[] for i in months[idx]}    
         df=pd.DataFrame({"Wind":wind_basin[idx],"Pressure":pres_basin[idx],"Month":month_basin[idx]})        
         for i in range(len(months[idx])):
@@ -229,10 +229,10 @@ def calculate_MPI_fields():
     basinlist=np.load(os.path.join(__location__,'BASINLIST_INTERP.npy')).item()
     preslist=np.load(os.path.join(__location__,'PRESLIST_INTERP.npy')).item()
 
-    sst_list={i:[] for i in range(0,6)}
-    month_list={i:[] for i in range(0,6)}
-    intensity_list={i:[] for i in range(0,6)}
-    pressure_drop_list={i:[] for i in range(0,6)}
+    sst_list={i:[] for i in range(0,5)}
+    month_list={i:[] for i in range(0,5)}
+    intensity_list={i:[] for i in range(0,5)}
+    pressure_drop_list={i:[] for i in range(0,5)}
     
     MSLP_field_all={i:[] for i in range(1,13)}
     SST_field_all={i:[] for i in range(1,13)}
@@ -261,12 +261,12 @@ def calculate_MPI_fields():
     #=============================================================================
     #Calculate the MPI coefficients (see DeMaria & Kaplan 1994)
     #=============================================================================
-    basins=['EP','NA','NI','SI','SP','WP']
-    coeflist={i:[] for i in range(0,6)}
+    basins=['NP','NA','NI','SI','SP']
+    coeflist={i:[] for i in range(0,5)}
     #Only consider those in the hurricane season
     months=[[6,7,8,9,10,11],[6,7,8,9,10,11],[4,5,6,9,10,11],[1,2,3,4,11,12],[1,2,3,4,11,12],[5,6,7,8,9,10,11]]
     months_for_coef=[[6,7,8,9,10,10],[6,7,8,9,10,11],[6,6,6,10,10,11],[1,2,3,4,11,12],[1,2,3,4,11,12],[5,6,7,8,9,10,11]]
-    for idx in range(0,6):
+    for idx in range(0,5):
         
         coeflist[idx]={i:[] for i in months[idx]}
         
@@ -316,11 +316,11 @@ def calculate_MPI_fields():
     # =============================================================================
     #  Calculate the new MPI in hPa         
     # =============================================================================
-    months=[[6,7,8,9,10,11],[6,7,8,9,10,11],[4,5,6,9,10,11],[1,2,3,4,11,12],[1,2,3,4,11,12],[5,6,7,8,9,10,11]]
+    months=[[5,6,7,8,9,10,11],[6,7,8,9,10,11],[4,5,6,9,10,11],[1,2,3,4,11,12],[1,2,3,4,11,12]]
     #these are the lowest mpi values per basin and serve as the lower bound, derived from Bister & Emanuel 2002
-    mpi_bounds=[[860,880,900,900,880,860],[920,900,900,900,880,880],[840,860,880,900,880,860],[840,880,860,860,840,860],[840,840,860,860,840,840],[860,860,860,870,870,860,860]]
+    mpi_bounds=[[860,860,860,870,870,860,860],[920,900,900,900,880,880],[840,860,880,900,880,860],[840,880,860,860,840,860],[840,840,860,860,840,840]]
     
-    for idx in range(0,6):
+    for idx in range(0,5):
         for m,midx in zip(months[idx],range(len(months[idx]))):
             [A,B,C]=coeflist[idx][m]    
         
@@ -393,11 +393,11 @@ def pressure_coefficients():
 
     coeflist={i:[] for i in range(0,6)}
     
-    months=[[6,7,8,9,10,11],[6,7,8,9,10,11],[4,5,6,10,10,11],[1,2,3,4,11,12],[1,2,3,4,11,12],[5,6,7,8,9,10,11]]
+    months=[[5,6,7,8,9,10,11],[6,7,8,9,10,11],[4,5,6,9,10,11],[1,2,3,4,11,12],[1,2,3,4,11,12]]
     
-    months_for_coef=[[6,7,8,9,10,11],[6,7,8,9,10,11],[4,5,6,9,10,11],[1,2,3,4,11,12],[1,2,3,4,11,12],[5,6,7,8,9,10,11]]
+    months_for_coef=[[5,6,7,8,9,10,11],[6,7,8,9,10,11],[4,5,6,9,10,11],[1,2,3,4,11,12],[1,2,3,4,11,12]]
         
-    for idx in range(0,6):
+    for idx in range(0,5):
         coeflist[idx]={i:[] for i in months_for_coef[idx]}
         
         lat0,lat1,lon0,lon11=preprocessing.BOUNDARIES_BASINS(idx) 

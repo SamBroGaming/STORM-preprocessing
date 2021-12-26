@@ -94,10 +94,10 @@ def track_coefficients():
            
     data=np.load(os.path.join(__location__,'TC_TRACK_VARIABLES.npy'),allow_pickle=True).item()
     
-    coefficients_list={i:[] for i in range(0,6)}
+    coefficients_list={i:[] for i in range(0,5)}
     
     
-    for idx in range(0,6):
+    for idx in range(0,5):
            
         df=pd.DataFrame({'Latitude':data[4][idx],'Longitude':data[5][idx],'Dlat0':data[0][idx],'Dlat1':data[1][idx],'Dlon0':data[2][idx],'Dlon1':data[3][idx]})
         lat0,lat1,lon0,lon1=preprocessing.BOUNDARIES_BASINS(idx)

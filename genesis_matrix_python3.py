@@ -49,8 +49,8 @@ def create_mask(basin):
     return mask
 
 def BOUNDARIES_BASINS(idx):
-    if idx=='EP': #Eastern Pacific
-        lat0,lat1,lon0,lon1=5,60,180,285
+    if idx=='NP': #North Pacific
+        lat0,lat1,lon0,lon1=5,60,100,285
     if idx=='NA': #North Atlantic
         lat0,lat1,lon0,lon1=5,60,255,359
     if idx=='NI': #North Indian
@@ -59,8 +59,6 @@ def BOUNDARIES_BASINS(idx):
         lat0,lat1,lon0,lon1=-60,-5,10,135
     if idx=='SP': #South Pacific
         lat0,lat1,lon0,lon1=-60,-5,135,240
-    if idx=='WP': #Western Pacific
-        lat0,lat1,lon0,lon1=5,60,100,180
     
     return lat0,lat1,lon0,lon1
 
@@ -142,10 +140,10 @@ def create_1deg_grid(delta_count_matrix,basin,month):
 
 
 def Change_genesis_locations(model):
-    monthsall={'EP':[6,7,8,9,10,11],'NA':[6,7,8,9,10,11],'NI':[4,5,6,9,10,11],'SI':[1,2,3,4,11,12],'SP':[1,2,3,4,11,12],'WP':[5,6,7,8,9,10,11]}    
+    monthsall={'NP':[5,6,7,8,9,10,11],'NA':[6,7,8,9,10,11],'NI':[4,5,6,9,10,11],'SI':[1,2,3,4,11,12],'SP':[1,2,3,4,11,12]}    
     locations=np.load(os.path.join(__location__,'GEN_LOC.npy'),allow_pickle=True,encoding='latin1').item()
 
-    for basin,idx in zip(['EP','NA','NI','SI','SP','WP'],range(0,6)):
+    for basin,idx in zip(['NP','NA','NI','SI','SP'],range(0,5)):
         for month in monthsall[basin]:                
             matrix_dict=create_5deg_grid(locations[idx],month,basin)
 
